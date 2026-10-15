@@ -1,0 +1,30 @@
+name: DORA Metrics Collector
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  collect-dora:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Calculate DORA Metrics (Simulation)
+        run: |
+          echo "=== DORA 4대 지표 자동 수집 시뮬레이션 ==="
+          echo "1. Deployment Frequency: 계산 완료 (주당 3회 배포)"
+          echo "2. Lead Time for Changes: 계산 완료 (평균 2.5시간)"
+          echo "3. Mean Time to Recovery (MTTR): 계산 완료 (평균 15분)"
+          echo "4. Change Failure Rate: 계산 완료 (5% 미만)"
+          
+          mkdir -p output
+          echo '{"deployment_frequency": "3/week", "lead_time": "2.5 hours", "mttr": "15 mins", "failure_rate": "4.5%"}' > output/dora-metrics.json
+
+      - name: Upload DORA JSON Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dora-metrics-report
+          path: output/dora-metrics.json
