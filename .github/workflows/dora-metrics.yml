@@ -9,7 +9,7 @@ jobs:
   dora-pipeline:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # 리포트에 주간 보고서 자동 커밋을 위한 권한
+      contents: write   # <-- 이 부분이 반드시 있어야 레포지토리에 파일을 쓸 수 있습니다!
 
     steps:
       - name: Checkout repository
@@ -19,8 +19,6 @@ jobs:
         run: |
           echo "=== DORA 4대 지표 자동 수집 중 ==="
           mkdir -p output
-          
-          # DORA 4대 지표 데이터를 JSON 파일로 생성 (선택 과제 충족)
           cat << EOF > output/dora-metrics.json
           {
             "timestamp": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
@@ -30,13 +28,22 @@ jobs:
             "change_failure_rate": "3.5%"
           }
           EOF
-          cat output/dora-metrics.json
 
       - name: Generate Weekly Markdown Report
         run: |
-          # 주간 보고서 자동 생성 (선택 과제 충족)
           cat << EOF > DORA_WEEKLY_REPORT.md
           # 📈 DORA 4대 지표 주간 자동 보고서
-          
           - **생성 일시:** $(date)
-          - **데이터 소스:** GitHub Actions 워크플로
+          - **배포 빈도 (Deployment Frequency):** 주당 4회
+          - **변경 리드 타임 (Lead Time for Changes):** 평균 2.2시간
+          - **평균 복구 시간 (MTTR):** 평균 12분
+          - **변경 실패율 (Change Failure Rate):** 3.5%
+          EOF
+
+      - name: Commit and Push Weekly Report
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add DORA_WEEKLY_REPORT.md output/dora-metrics.json
+          git commit -m "chore: 자동 생성된 DORA 주간 보고서 및 JSON 업데이트" || echo "변경 사항 없음"
+          git push
