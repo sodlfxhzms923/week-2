@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-10-15T12:50:00Z",
+  "deployment_frequency": "4 / week",
+  "lead_time_for_changes": "2.2 hours",
+  "mean_time_to_recovery": "12 mins",
+  "change_failure_rate": "3.5%"
+}
